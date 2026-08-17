@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Metabolic Hub for Women | Menopause & Cardiometabolic Screening</title>
+  <meta name="description" content="A cardiometabolic screening hub for peri- and postmenopausal women—focused on catching missed care opportunities and overlooked patterns." />
+
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#121a33;
+      --panel2:#0f1630;
+      --text:#eef1f7;
+      --muted:#b5bdd2;
+      --accent:#6aa6ff;
+      --accent2:#9b7bff;
+      --border:rgba(255,255,255,.12);
+      --ok:#35d39a;
+      --warn:#ffd166;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% 0%, #172557, var(--bg));
+      line-height:1.5;
+    }
+    a{color:var(--accent)}
+    .wrap{max-width:1050px;margin:0 auto;padding:44px 18px 60px}
+
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
+    }
+    .brand{display:flex;gap:12px;align-items:center}
+    .mark{
+      width:42px;height:42px;border-radius:14px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow:0 18px 60px rgba(106,166,255,.22);
+    }
+    h1{margin:0;font-size:clamp(22px,3vw,34px)}
+    .subtitle{margin:6px 0 0;color:var(--muted);max-width:58ch}
+
+    nav a{
+      display:inline-block;
+      text-decoration:none;
+      color:var(--text);
+      margin-left:10px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid transparent;
+    }
+    nav a:hover{border-color:var(--border);background:rgba(255,255,255,.04)}
+
+    .hero{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    .card{
+      background:rgba(18,26,51,.78);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:18px;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 20px 70px rgba(0,0,0,.28);
+    }
+
+    .ctaRow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .btn{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 14px;border-radius:14px;
+      border:1px solid var(--border);
+      text-decoration:none;
+      color:var(--text);
+      background:rgba(255,255,255,.04);
+    }
+    .btn.primary{border-color:rgba(106,166,255,.5);background:rgba(106,166,255,.14)}
+
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:14px;
+    }
+    .col-7{grid-column: span 7}
+    .col-5{grid-column: span 5}
+    .col-6{grid-column: span 6}
+    .col-12{grid-column: span 12}
+
+    h2{margin:0 0 8px;font-size:18px}
+    h3{margin:16px 0 8px;font-size:15px;color:var(--text)}
+    p{margin:10px 0}
+    ul{margin:10px 0 0;padding-left:18px;color:var(--text)}
+    li{margin:6px 0;color:var(--text)}
+    .muted{color:var(--muted)}
+
+    .pillRow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .pill{font-size:12px;color:var(--muted);border:1px solid var(--border);padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.03)}
+
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border:1px solid var(--border);
+      border-radius:16px;
+    }
+    .table th,.table td{padding:10px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+    .table th{background:rgba(255,255,255,.03);text-align:left;font-size:13px;color:var(--muted)}
+    .table tr:last-child td{border-bottom:none}
+    code{background:rgba(255,255,255,.06);border:1px solid var(--border);padding:2px 6px;border-radius:9px}
+
+    .flag{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 12px;border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      margin-top:10px;
+    }
+    .dot{width:10px;height:10px;border-radius:99px;background:var(--warn)}
+    .dot.ok{background:var(--ok)}
+
+    .footer{margin-top:16px;color:var(--muted);font-size:13px}
+
+    @media (max-width: 900px){
+      header{flex-direction:column}
+      nav a{margin-left:0;margin-right:10px}
+      .hero{grid-template-columns:1fr}
+      .col-7,.col-5,.col-6,.col-12{grid-column: span 12}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <header>
+      <div class="brand">
+        <div class="mark" aria-hidden="true"></div>
+        <div>
+          <h1>Metabolic Hub for Women</h1>
+          <p class="subtitle">
+            A practical screening hub for peri‑ and postmenopausal women—built to catch
+            <strong>missed cardiometabolic care opportunities</strong> and surface patterns that are easy to overlook.
+          </p>
+        </div>
+      </div>
+
+      <nav aria-label="Page navigation">
+        <a href="#checklist">Checklist</a>
+        <a href="#patterns">Patterns</a>
+        <a href="#talk">Talk to your clinician</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="card">
+        <h2>What this is</h2>
+        <p class="muted">
+          Menopause is associated with cardiometabolic shifts (blood pressure, lipids, glucose regulation, and body fat distribution).
+          This page organizes the core metrics clinicians use for risk assessment and makes them easier to review together.
+        </p>
+
+        <div class="pillRow" aria-label="Core pillars">
+          <span class="pill">Adiposity: BMI + waist circumference</span>
+          <span class="pill">Blood pressure</span>
+          <span class="pill">Lipids</span>
+          <span class="pill">Glucose / diabetes</span>
+          <span class="pill">Metabolic syndrome</span>
+          <span class="pill">ASCVD risk + enhancers</span>
+          <span class="pill">Kidney function (CKM)</span>
+        </div>
+
+        <div class="ctaRow">
+          <a class="btn primary" href="#checklist">Open screening checklist</a>
+          <a class="btn" href="#talk">Print / copy questions</a>
+        </div>
+
+        <div class="flag" role="note" aria-label="Disclaimer">
+          <span class="dot" aria-hidden="true"></span>
+          <div>
+            <strong>Educational only.</strong>
+            <div class="muted">Not medical advice. Risk tools can underestimate risk in women; review results with a clinician.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Missed opportunities this hub targets</h2>
+        <ul>
+          <li><strong>Central adiposity</strong> not measured (waist circumference) when BMI is “not too high.”</li>
+          <li>“Normal HDL” interpreted as protective despite menopause‑related HDL function changes.</li>
+          <li>BP, triglycerides, and A1C reviewed separately (missing the <strong>metabolic syndrome cluster</strong>).</li>
+          <li>Female‑specific risk enhancers not incorporated into global risk discussion.</li>
+          <li>Kidney markers (eGFR, urine ACR) omitted despite CKM risk overlap.</li>
+        </ul>
+        <p class="muted" style="margin-top:12px">
+          If you build this into a product later, the goal is simple: organize key measures into one view and highlight when the pattern changes.
+        </p>
+      </div>
+    </section>
+
+    <section class="grid" id="checklist">
+      <div class="card col-12">
+        <h2>Cardiometabolic screening checklist (postmenopause + obesity focus)</h2>
+        <p class="muted">Use this as a structured review. Add dates and results over time.</p>
+
+        <table class="table" aria-label="Screening table">
+          <thead>
+            <tr>
+              <th style="width:22%">Domain</th>
+              <th style="width:40%">What to assess</th>
+              <th style="width:38%">Why it matters / notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Adiposity</strong></td>
+              <td>
+                <div><strong>BMI</strong> (at least annually)</div>
+                <div><strong>Waist circumference</strong> (especially if BMI &lt; 35)</div>
+                <div class="muted">Threshold often used: ≥88 cm (≥35 in) in women</div>
+              </td>
+              <td>Central fat redistribution is common in the menopausal transition and can add ASCVD risk beyond BMI alone.</td>
+            </tr>
+            <tr>
+              <td><strong>Blood pressure</strong></td>
+              <td>
+                At least annually; document home readings if available.
+                <div class="muted">Elevated: ≥140/90 warrants evaluation.</div>
+              </td>
+              <td>Obesity correlates with rising systolic BP; later life control rates can be worse in women.</td>
+            </tr>
+            <tr>
+              <td><strong>Lipids</strong></td>
+              <td>
+                Fasting or nonfasting lipid panel (per guideline cadence).
+                <div class="muted">Track: TC, LDL‑C, TG, HDL‑C; consider ApoB if available.</div>
+              </td>
+              <td>LDL‑C and ApoB can rise across the final menstrual period; atherogenic dyslipidemia often coexists with metabolic syndrome.</td>
+            </tr>
+            <tr>
+              <td><strong>Glucose / diabetes</strong></td>
+              <td>
+                A1C and/or fasting glucose; consider OGTT when indicated.
+                <div class="muted">Overweight/obesity often triggers risk‑based screening intervals.</div>
+              </td>
+              <td>Diabetes confers disproportionately higher CV risk in women than men.</td>
+            </tr>
+            <tr>
+              <td><strong>Metabolic syndrome</strong></td>
+              <td>
+                Check for clustering: central obesity + BP + TG + HDL + glucose.
+                <div class="muted">≥3 of 5 criteria = MetS.</div>
+              </td>
+              <td>MetS prevalence increases with menopause and is independently associated with incident CVD in postmenopausal women.</td>
+            </tr>
+            <tr>
+              <td><strong>Global risk</strong></td>
+              <td>
+                Calculate 10‑year ASCVD risk (PCE / PREVENT).
+                <div class="muted">Document baseline and changes over time.</div>
+              </td>
+              <td>Standard calculators may underestimate risk in women; context matters.</td>
+            </tr>
+            <tr>
+              <td><strong>Risk enhancers</strong></td>
+              <td>
+                Female‑specific and general enhancers:
+                <ul>
+                  <li>Early menopause / POI</li>
+                  <li>Adverse pregnancy outcomes (preeclampsia, GDM)</li>
+                  <li>PCOS</li>
+                  <li>Autoimmune/inflammatory disease</li>
+                  <li>Depression</li>
+                </ul>
+              </td>
+              <td>These can shift borderline/intermediate risk toward earlier pharmacotherapy or more intensive prevention.</td>
+            </tr>
+            <tr>
+              <td><strong>Selected markers</strong></td>
+              <td>
+                Consider when appropriate:
+                <ul>
+                  <li>Coronary artery calcium (CAC)</li>
+                  <li>Lp(a)</li>
+                  <li>hs‑CRP</li>
+                </ul>
+              </td>
+              <td>Can refine risk when decisions are uncertain (e.g., intermediate risk).</td>
+            </tr>
+            <tr>
+              <td><strong>Kidney function (CKM)</strong></td>
+              <td>
+                <strong>eGFR</strong> and <strong>urine albumin‑creatinine ratio</strong>.
+              </td>
+              <td>Kidney markers add prognostic information alongside metabolic and CV screening.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="muted" style="margin-top:12px">
+          Tip: capture <em>trend lines</em> (e.g., waist, BP, TG, A1C) rather than single snapshots—patterns often emerge over 6–24 months.
+        </p>
+      </div>
+    </section>
+
+    <section class="grid" id="patterns">
+      <div class="card col-7">
+        <h2>Pattern signals that are easy to miss</h2>
+        <p class="muted">These are not diagnoses—just “review together” prompts.</p>
+
+        <h3>1) Central adiposity + borderline labs</h3>
+        <ul>
+          <li>Waist circumference rising while BMI changes little</li>
+          <li>Triglycerides creeping up (≥150 mg/dL)</li>
+          <li>A1C drifting upward (even within “prediabetes” range)</li>
+        </ul>
+
+        <h3>2) Metabolic syndrome clustering</h3>
+        <ul>
+          <li>BP elevated + TG elevated + low HDL + hyperglycemia</li>
+          <li>Document criteria count (0–5) at each visit</li>
+        </ul>
+
+        <h3>3) “Reassuring HDL” in the wrong context</h3>
+        <ul>
+          <li>HDL‑C may look normal, but overall atherogenic profile worsens across menopause</li>
+          <li>Consider ApoB/non‑HDL‑C discussion with clinician when available</li>
+        </ul>
+
+        <h3>4) Risk enhancers not captured in calculators</h3>
+        <ul>
+          <li>Early menopause/POI, pregnancy complications, PCOS</li>
+          <li>Inflammatory disease, depression</li>
+        </ul>
+      </div>
+
+      <div class="card col-5" id="talk">
+        <h2>Bring this to your visit</h2>
+        <p class="muted">Copy/paste into a portal message or print.</p>
+
+        <div class="flag">
+          <span class="dot ok" aria-hidden="true"></span>
+          <div>
+            <strong>Questions to ask</strong>
+            <div class="muted">Focused on missed opportunities + patterns</div>
+          </div>
+        </div>
+
+        <ul>
+          <li>Can we measure/track my <strong>waist circumference</strong> along with BMI?</li>
+          <li>Do my BP/lipids/A1C meet criteria for <strong>metabolic syndrome</strong>?</li>
+          <li>What is my 10‑year <strong>ASCVD risk</strong>, and does it underestimate risk for me?</li>
+          <li>Do I have any <strong>female‑specific risk enhancers</strong> (early menopause, pregnancy history, PCOS)?</li>
+          <li>Should we check <strong>kidney markers</strong> (eGFR, urine ACR)?</li>
+          <li>Would <strong>CAC</strong>, <strong>Lp(a)</strong>, or <strong>hs‑CRP</strong> help refine my risk?</li>
+        </ul>
+
+        <div class="ctaRow">
+          <a class="btn primary" href="#" onclick="window.print(); return false;">Print this page</a>
+          <a class="btn" href="#" id="copyBtn">Copy questions</a>
+        </div>
+
+        <p class="muted" id="copyStatus" style="margin:10px 0 0"></p>
+      </div>
+
+      <div class="card col-12">
+        <h2>Implementation note (if you turn this into a product)</h2>
+        <p class="muted">
+          The highest‑value feature is not another tracker—it’s a <strong>single integrated view</strong> that:
+          (1) confirms whether each screening domain was actually completed, and
+          (2) flags when multiple small changes form a coherent risk pattern.
+        </p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>
+        Educational content only. If you have chest pain, severe shortness of breath, or stroke symptoms, seek emergency care.
+      </p>
+      <p>
+        Customize: replace placeholder links, add resources, and connect a contact form if desired.
+      </p>
+      <p>© <span id="year"></span> Metabolic Hub for Women</p>
+    </footer>
+
+  </div>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const copyBtn = document.getElementById('copyBtn');
+    const copyStatus = document.getElementById('copyStatus');
+
+    const questions = [
+      'Can we measure/track my waist circumference along with BMI?',
+      'Do my BP/lipids/A1C meet criteria for metabolic syndrome?',
+      'What is my 10-year ASCVD risk, and does it underestimate risk for me?',
+      'Do I have any female-specific risk enhancers (early menopause, pregnancy history, PCOS)?',
+      'Should we check kidney markers (eGFR, urine ACR)?',
+      'Would CAC, Lp(a), or hs-CRP help refine my risk?'
+    ].map(q => '- ' + q).join('\n');
+
+    copyBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        await navigator.clipboard.writeText('Questions for my visit:\n' + questions);
+        copyStatus.textContent = 'Copied to clipboard.';
+      } catch (err) {
+        copyStatus.textContent = 'Copy failed in this browser. You can manually select and copy the text.';
+      }
+      setTimeout(() => copyStatus.textContent = '', 2500);
+    });
+  </script>
+</body>
+</html>
