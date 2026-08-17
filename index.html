@@ -3,14 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Metabolic Hub for Women | Menopause & Cardiometabolic Screening</title>
-  <meta name="description" content="A cardiometabolic screening hub for peri- and postmenopausal women—focused on catching missed care opportunities and overlooked patterns." />
+  <title>Menopause Cardiometabolic Trends — Clinician Prototype</title>
+  <meta name="description" content="Clinician-facing prototype for capturing cardiometabolic measures in peri/postmenopausal women, storing locally, graphing trends, and flagging missed care opportunities." />
+
+  <!-- Chart.js (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
   <style>
     :root{
       --bg:#0b1020;
       --panel:#121a33;
-      --panel2:#0f1630;
       --text:#eef1f7;
       --muted:#b5bdd2;
       --accent:#6aa6ff;
@@ -18,25 +20,22 @@
       --border:rgba(255,255,255,.12);
       --ok:#35d39a;
       --warn:#ffd166;
+      --bad:#ff6b6b;
     }
     *{box-sizing:border-box}
     body{
       margin:0;
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       color:var(--text);
-      background:
-        radial-gradient(900px 500px at 15% 0%, #172557, var(--bg));
-      line-height:1.5;
+      background: radial-gradient(900px 500px at 15% 0%, #172557, var(--bg));
+      line-height:1.35;
     }
     a{color:var(--accent)}
-    .wrap{max-width:1050px;margin:0 auto;padding:44px 18px 60px}
+    .wrap{max-width:1200px;margin:0 auto;padding:28px 16px 60px}
 
     header{
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:18px;
+      display:flex;align-items:flex-start;justify-content:space-between;gap:16px;
+      margin-bottom:14px;
     }
     .brand{display:flex;gap:12px;align-items:center}
     .mark{
@@ -44,97 +43,107 @@
       background:linear-gradient(135deg,var(--accent),var(--accent2));
       box-shadow:0 18px 60px rgba(106,166,255,.22);
     }
-    h1{margin:0;font-size:clamp(22px,3vw,34px)}
-    .subtitle{margin:6px 0 0;color:var(--muted);max-width:58ch}
+    h1{margin:0;font-size:clamp(18px,2.6vw,28px)}
+    .subtitle{margin:6px 0 0;color:var(--muted);max-width:72ch}
+    .byline{margin:8px 0 0;color:var(--muted);font-size:13px}
 
     nav a{
-      display:inline-block;
-      text-decoration:none;
-      color:var(--text);
-      margin-left:10px;
-      padding:8px 10px;
-      border-radius:12px;
-      border:1px solid transparent;
+      display:inline-block;text-decoration:none;color:var(--text);
+      margin-left:10px;padding:8px 10px;border-radius:12px;border:1px solid transparent;
     }
     nav a:hover{border-color:var(--border);background:rgba(255,255,255,.04)}
 
-    .hero{
-      margin-top:16px;
+    .grid{
       display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap:14px;
+      grid-template-columns: repeat(12, 1fr);
+      gap:12px;
+      margin-top:12px;
     }
     .card{
       background:rgba(18,26,51,.78);
       border:1px solid var(--border);
-      border-radius:18px;
-      padding:18px;
+      border-radius:16px;
+      padding:14px;
       backdrop-filter: blur(6px);
-      box-shadow: 0 20px 70px rgba(0,0,0,.28);
+      box-shadow: 0 20px 70px rgba(0,0,0,.25);
     }
+    .col-4{grid-column: span 4}
+    .col-5{grid-column: span 5}
+    .col-6{grid-column: span 6}
+    .col-7{grid-column: span 7}
+    .col-8{grid-column: span 8}
+    .col-12{grid-column: span 12}
 
-    .ctaRow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    h2{margin:0 0 10px;font-size:16px}
+    h3{margin:14px 0 8px;font-size:14px;color:var(--text)}
+    .muted{color:var(--muted)}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .field{display:flex;flex-direction:column;gap:6px;min-width:160px;flex:1}
+    label{font-size:12px;color:var(--muted)}
+    input, select, textarea{
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px 10px;
+      outline:none;
+    }
+    input::placeholder, textarea::placeholder{color:rgba(181,189,210,.7)}
+    textarea{min-height:88px;resize:vertical}
+
+    .btnRow{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
     .btn{
       display:inline-flex;align-items:center;gap:8px;
-      padding:10px 14px;border-radius:14px;
+      padding:10px 12px;border-radius:14px;
       border:1px solid var(--border);
       text-decoration:none;
       color:var(--text);
       background:rgba(255,255,255,.04);
+      cursor:pointer;
+      user-select:none;
     }
-    .btn.primary{border-color:rgba(106,166,255,.5);background:rgba(106,166,255,.14)}
+    .btn.primary{border-color:rgba(106,166,255,.55);background:rgba(106,166,255,.14)}
+    .btn.danger{border-color:rgba(255,107,107,.45);background:rgba(255,107,107,.12)}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
 
-    .grid{
-      margin-top:14px;
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap:14px;
-    }
-    .col-7{grid-column: span 7}
-    .col-5{grid-column: span 5}
-    .col-6{grid-column: span 6}
-    .col-12{grid-column: span 12}
-
-    h2{margin:0 0 8px;font-size:18px}
-    h3{margin:16px 0 8px;font-size:15px;color:var(--text)}
-    p{margin:10px 0}
-    ul{margin:10px 0 0;padding-left:18px;color:var(--text)}
-    li{margin:6px 0;color:var(--text)}
-    .muted{color:var(--muted)}
-
-    .pillRow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-    .pill{font-size:12px;color:var(--muted);border:1px solid var(--border);padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.03)}
-
-    .table{
-      width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-      overflow:hidden;
+    .pillRow{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .pill{
+      font-size:12px;color:var(--muted);
       border:1px solid var(--border);
-      border-radius:16px;
+      padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.03)
     }
-    .table th,.table td{padding:10px 10px;border-bottom:1px solid var(--border);vertical-align:top}
-    .table th{background:rgba(255,255,255,.03);text-align:left;font-size:13px;color:var(--muted)}
-    .table tr:last-child td{border-bottom:none}
-    code{background:rgba(255,255,255,.06);border:1px solid var(--border);padding:2px 6px;border-radius:9px}
 
     .flag{
-      display:inline-flex;align-items:center;gap:8px;
+      display:flex;align-items:flex-start;gap:10px;
       padding:10px 12px;border-radius:14px;
       border:1px solid var(--border);
       background:rgba(255,255,255,.03);
       margin-top:10px;
     }
-    .dot{width:10px;height:10px;border-radius:99px;background:var(--warn)}
+    .dot{width:10px;height:10px;border-radius:99px;margin-top:4px;background:var(--warn)}
     .dot.ok{background:var(--ok)}
+    .dot.bad{background:var(--bad)}
+    .flag strong{display:block}
+    .flag .muted{font-size:13px}
 
-    .footer{margin-top:16px;color:var(--muted);font-size:13px}
+    .table{
+      width:100%;
+      border-collapse:separate;border-spacing:0;
+      overflow:hidden;border:1px solid var(--border);border-radius:16px;
+    }
+    .table th,.table td{padding:9px 10px;border-bottom:1px solid var(--border);vertical-align:top}
+    .table th{background:rgba(255,255,255,.03);text-align:left;font-size:12px;color:var(--muted)}
+    .table tr:last-child td{border-bottom:none}
+    code{background:rgba(255,255,255,.06);border:1px solid var(--border);padding:2px 6px;border-radius:9px}
 
-    @media (max-width: 900px){
+    .chartBox{height:260px}
+    .small{font-size:12px}
+
+    @media (max-width: 980px){
       header{flex-direction:column}
       nav a{margin-left:0;margin-right:10px}
-      .hero{grid-template-columns:1fr}
-      .col-7,.col-5,.col-6,.col-12{grid-column: span 12}
+      .col-4,.col-5,.col-6,.col-7,.col-8,.col-12{grid-column: span 12}
+      .chartBox{height:240px}
     }
   </style>
 </head>
@@ -145,280 +154,689 @@
       <div class="brand">
         <div class="mark" aria-hidden="true"></div>
         <div>
-          <h1>Metabolic Hub for Women</h1>
+          <h1>Menopause Cardiometabolic Trends — Clinician Prototype</h1>
           <p class="subtitle">
-            A practical screening hub for peri‑ and postmenopausal women—built to catch
-            <strong>missed cardiometabolic care opportunities</strong> and surface patterns that are easy to overlook.
+            Enter values (or plan for future EHR pull). Data are stored locally in this browser to visualize longitudinal trends
+            and flag missed screening domains and pattern-level cardiometabolic risk signals.
+          </p>
+          <p class="byline">
+            Prototype created by <strong>Dr. Vinaya Gogineni</strong> and <strong>Dr. Nihit N. Mehta</strong>.
           </p>
         </div>
       </div>
 
       <nav aria-label="Page navigation">
-        <a href="#checklist">Checklist</a>
-        <a href="#patterns">Patterns</a>
-        <a href="#talk">Talk to your clinician</a>
+        <a href="#entry">Data entry</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#history">History</a>
       </nav>
     </header>
 
-    <section class="hero">
-      <div class="card">
-        <h2>What this is</h2>
+    <section class="grid">
+      <div class="card col-12">
+        <h2>Clinical intent</h2>
         <p class="muted">
-          Menopause is associated with cardiometabolic shifts (blood pressure, lipids, glucose regulation, and body fat distribution).
-          This page organizes the core metrics clinicians use for risk assessment and makes them easier to review together.
+          In postmenopausal women with overweight/obesity, key cardiometabolic assessment pillars include
+          <strong>blood pressure</strong>, <strong>lipids</strong>, <strong>glucose/diabetes status</strong>, and
+          <strong>adiposity</strong> (BMI + waist circumference), integrated with <strong>global ASCVD risk</strong>,
+          <strong>metabolic syndrome</strong> clustering, female-specific risk enhancers, and (selected) CAC/Lp(a)/hs-CRP and kidney function.
         </p>
-
         <div class="pillRow" aria-label="Core pillars">
-          <span class="pill">Adiposity: BMI + waist circumference</span>
-          <span class="pill">Blood pressure</span>
+          <span class="pill">BMI + waist</span>
+          <span class="pill">BP</span>
           <span class="pill">Lipids</span>
-          <span class="pill">Glucose / diabetes</span>
-          <span class="pill">Metabolic syndrome</span>
-          <span class="pill">ASCVD risk + enhancers</span>
-          <span class="pill">Kidney function (CKM)</span>
+          <span class="pill">A1C / glucose</span>
+          <span class="pill">Metabolic syndrome clustering</span>
+          <span class="pill">ASCVD risk context</span>
+          <span class="pill">Kidney (eGFR, urine ACR)</span>
         </div>
 
-        <div class="ctaRow">
-          <a class="btn primary" href="#checklist">Open screening checklist</a>
-          <a class="btn" href="#talk">Print / copy questions</a>
-        </div>
-
-        <div class="flag" role="note" aria-label="Disclaimer">
+        <div class="flag" role="note">
           <span class="dot" aria-hidden="true"></span>
           <div>
-            <strong>Educational only.</strong>
-            <div class="muted">Not medical advice. Risk tools can underestimate risk in women; review results with a clinician.</div>
+            <strong>Prototype disclaimer</strong>
+            <div class="muted">
+              Educational/workflow support only; not diagnostic or treatment advice.
+              Data are stored in <code>localStorage</code> on this device/browser. Avoid patient identifiers unless approved.
+            </div>
           </div>
         </div>
       </div>
+    </section>
 
-      <div class="card">
-        <h2>Missed opportunities this hub targets</h2>
-        <ul>
-          <li><strong>Central adiposity</strong> not measured (waist circumference) when BMI is “not too high.”</li>
-          <li>“Normal HDL” interpreted as protective despite menopause‑related HDL function changes.</li>
-          <li>BP, triglycerides, and A1C reviewed separately (missing the <strong>metabolic syndrome cluster</strong>).</li>
-          <li>Female‑specific risk enhancers not incorporated into global risk discussion.</li>
-          <li>Kidney markers (eGFR, urine ACR) omitted despite CKM risk overlap.</li>
-        </ul>
-        <p class="muted" style="margin-top:12px">
-          If you build this into a product later, the goal is simple: organize key measures into one view and highlight when the pattern changes.
-        </p>
+    <section class="grid" id="entry">
+      <div class="card col-12">
+        <h2>Visit entry</h2>
+        <p class="muted small">Tip: enter partial data—missing-domain flags will help you see what wasn’t captured.</p>
+
+        <div class="row">
+          <div class="field" style="min-width:240px;flex:0.6">
+            <label for="visitDate">Visit date</label>
+            <input id="visitDate" type="date" />
+          </div>
+          <div class="field">
+            <label for="patientKey">Local patient key (optional, non-identifier)</label>
+            <input id="patientKey" type="text" placeholder="e.g., StudyID-023 (avoid MRN/name)" />
+          </div>
+        </div>
+
+        <h3>Adiposity</h3>
+        <div class="row">
+          <div class="field">
+            <label for="weightKg">Weight (kg)</label>
+            <input id="weightKg" type="number" step="0.1" placeholder="e.g., 82.5" />
+          </div>
+          <div class="field">
+            <label for="heightCm">Height (cm)</label>
+            <input id="heightCm" type="number" step="0.1" placeholder="e.g., 165" />
+          </div>
+          <div class="field">
+            <label for="bmi">BMI (auto-calculated if height+weight)</label>
+            <input id="bmi" type="number" step="0.1" placeholder="e.g., 30.2" />
+          </div>
+          <div class="field">
+            <label for="waistCm">Waist circumference (cm)</label>
+            <input id="waistCm" type="number" step="0.1" placeholder="e.g., 92" />
+          </div>
+        </div>
+
+        <h3>Blood pressure</h3>
+        <div class="row">
+          <div class="field">
+            <label for="sbp">SBP (mmHg)</label>
+            <input id="sbp" type="number" step="1" placeholder="e.g., 138" />
+          </div>
+          <div class="field">
+            <label for="dbp">DBP (mmHg)</label>
+            <input id="dbp" type="number" step="1" placeholder="e.g., 84" />
+          </div>
+        </div>
+
+        <h3>Lipids</h3>
+        <div class="row">
+          <div class="field">
+            <label for="ldl">LDL-C (mg/dL)</label>
+            <input id="ldl" type="number" step="1" placeholder="e.g., 132" />
+          </div>
+          <div class="field">
+            <label for="hdl">HDL-C (mg/dL)</label>
+            <input id="hdl" type="number" step="1" placeholder="e.g., 52" />
+          </div>
+          <div class="field">
+            <label for="tg">Triglycerides (mg/dL)</label>
+            <input id="tg" type="number" step="1" placeholder="e.g., 165" />
+          </div>
+          <div class="field">
+            <label for="apob">ApoB (mg/dL, optional)</label>
+            <input id="apob" type="number" step="1" placeholder="e.g., 105" />
+          </div>
+        </div>
+
+        <h3>Glycemia</h3>
+        <div class="row">
+          <div class="field">
+            <label for="a1c">HbA1c (%)</label>
+            <input id="a1c" type="number" step="0.1" placeholder="e.g., 5.9" />
+          </div>
+          <div class="field">
+            <label for="fastingGlucose">Fasting glucose (mg/dL, optional)</label>
+            <input id="fastingGlucose" type="number" step="1" placeholder="e.g., 104" />
+          </div>
+        </div>
+
+        <h3>Kidney (CKM context)</h3>
+        <div class="row">
+          <div class="field">
+            <label for="egfr">eGFR (mL/min/1.73m²)</label>
+            <input id="egfr" type="number" step="1" placeholder="e.g., 78" />
+          </div>
+          <div class="field">
+            <label for="uacr">Urine ACR (mg/g)</label>
+            <input id="uacr" type="number" step="1" placeholder="e.g., 22" />
+          </div>
+        </div>
+
+        <h3>Risk enhancers (checkboxes)</h3>
+        <div class="row">
+          <div class="field" style="min-width:240px">
+            <label><input type="checkbox" id="enhEarlyMenopause" /> Early/premature menopause or POI</label>
+            <label><input type="checkbox" id="enhAPO" /> Adverse pregnancy outcomes (preeclampsia, GDM)</label>
+            <label><input type="checkbox" id="enhPCOS" /> PCOS</label>
+          </div>
+          <div class="field" style="min-width:240px">
+            <label><input type="checkbox" id="enhInflamm" /> Autoimmune/inflammatory disease</label>
+            <label><input type="checkbox" id="enhDepression" /> Depression</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field" style="min-width:260px;flex:1.5">
+            <label for="notes">Notes (optional)</label>
+            <textarea id="notes" placeholder="e.g., on statin; home BP average 132/78; lifestyle plan; symptoms; etc."></textarea>
+          </div>
+        </div>
+
+        <div class="btnRow">
+          <button class="btn primary" id="saveBtn">Save visit</button>
+          <button class="btn" id="exportBtn">Export JSON</button>
+          <label class="btn" for="importFile" style="cursor:pointer">Import JSON</label>
+          <input id="importFile" type="file" accept="application/json" style="display:none" />
+          <button class="btn danger" id="clearBtn">Clear all local data</button>
+        </div>
+
+        <p class="muted small" id="status"></p>
       </div>
     </section>
 
-    <section class="grid" id="checklist">
+    <section class="grid" id="dashboard">
       <div class="card col-12">
-        <h2>Cardiometabolic screening checklist (postmenopause + obesity focus)</h2>
-        <p class="muted">Use this as a structured review. Add dates and results over time.</p>
+        <h2>Dashboard: missed opportunities + pattern flags</h2>
+        <div id="flags"></div>
+      </div>
 
-        <table class="table" aria-label="Screening table">
+      <div class="card col-6">
+        <h2>Waist circumference (cm)</h2>
+        <div class="chartBox"><canvas id="waistChart"></canvas></div>
+      </div>
+
+      <div class="card col-6">
+        <h2>Blood pressure (mmHg)</h2>
+        <div class="chartBox"><canvas id="bpChart"></canvas></div>
+      </div>
+
+      <div class="card col-6">
+        <h2>Glycemia: HbA1c (%)</h2>
+        <div class="chartBox"><canvas id="a1cChart"></canvas></div>
+      </div>
+
+      <div class="card col-6">
+        <h2>Lipids (mg/dL)</h2>
+        <div class="chartBox"><canvas id="lipidChart"></canvas></div>
+      </div>
+
+      <div class="card col-12">
+        <h2>Kidney (CKM): eGFR + urine ACR</h2>
+        <div class="chartBox"><canvas id="kidneyChart"></canvas></div>
+        <p class="muted small">Note: urine ACR uses a separate axis (right) due to scale differences.</p>
+      </div>
+    </section>
+
+    <section class="grid" id="history">
+      <div class="card col-12">
+        <h2>Visit history</h2>
+        <table class="table" aria-label="Visit history table">
           <thead>
             <tr>
-              <th style="width:22%">Domain</th>
-              <th style="width:40%">What to assess</th>
-              <th style="width:38%">Why it matters / notes</th>
+              <th>Date</th>
+              <th>Waist</th>
+              <th>BP</th>
+              <th>A1c</th>
+              <th>LDL / HDL / TG</th>
+              <th>eGFR / uACR</th>
+              <th>MetS criteria</th>
+              <th>Enhancers</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td><strong>Adiposity</strong></td>
-              <td>
-                <div><strong>BMI</strong> (at least annually)</div>
-                <div><strong>Waist circumference</strong> (especially if BMI &lt; 35)</div>
-                <div class="muted">Threshold often used: ≥88 cm (≥35 in) in women</div>
-              </td>
-              <td>Central fat redistribution is common in the menopausal transition and can add ASCVD risk beyond BMI alone.</td>
-            </tr>
-            <tr>
-              <td><strong>Blood pressure</strong></td>
-              <td>
-                At least annually; document home readings if available.
-                <div class="muted">Elevated: ≥140/90 warrants evaluation.</div>
-              </td>
-              <td>Obesity correlates with rising systolic BP; later life control rates can be worse in women.</td>
-            </tr>
-            <tr>
-              <td><strong>Lipids</strong></td>
-              <td>
-                Fasting or nonfasting lipid panel (per guideline cadence).
-                <div class="muted">Track: TC, LDL‑C, TG, HDL‑C; consider ApoB if available.</div>
-              </td>
-              <td>LDL‑C and ApoB can rise across the final menstrual period; atherogenic dyslipidemia often coexists with metabolic syndrome.</td>
-            </tr>
-            <tr>
-              <td><strong>Glucose / diabetes</strong></td>
-              <td>
-                A1C and/or fasting glucose; consider OGTT when indicated.
-                <div class="muted">Overweight/obesity often triggers risk‑based screening intervals.</div>
-              </td>
-              <td>Diabetes confers disproportionately higher CV risk in women than men.</td>
-            </tr>
-            <tr>
-              <td><strong>Metabolic syndrome</strong></td>
-              <td>
-                Check for clustering: central obesity + BP + TG + HDL + glucose.
-                <div class="muted">≥3 of 5 criteria = MetS.</div>
-              </td>
-              <td>MetS prevalence increases with menopause and is independently associated with incident CVD in postmenopausal women.</td>
-            </tr>
-            <tr>
-              <td><strong>Global risk</strong></td>
-              <td>
-                Calculate 10‑year ASCVD risk (PCE / PREVENT).
-                <div class="muted">Document baseline and changes over time.</div>
-              </td>
-              <td>Standard calculators may underestimate risk in women; context matters.</td>
-            </tr>
-            <tr>
-              <td><strong>Risk enhancers</strong></td>
-              <td>
-                Female‑specific and general enhancers:
-                <ul>
-                  <li>Early menopause / POI</li>
-                  <li>Adverse pregnancy outcomes (preeclampsia, GDM)</li>
-                  <li>PCOS</li>
-                  <li>Autoimmune/inflammatory disease</li>
-                  <li>Depression</li>
-                </ul>
-              </td>
-              <td>These can shift borderline/intermediate risk toward earlier pharmacotherapy or more intensive prevention.</td>
-            </tr>
-            <tr>
-              <td><strong>Selected markers</strong></td>
-              <td>
-                Consider when appropriate:
-                <ul>
-                  <li>Coronary artery calcium (CAC)</li>
-                  <li>Lp(a)</li>
-                  <li>hs‑CRP</li>
-                </ul>
-              </td>
-              <td>Can refine risk when decisions are uncertain (e.g., intermediate risk).</td>
-            </tr>
-            <tr>
-              <td><strong>Kidney function (CKM)</strong></td>
-              <td>
-                <strong>eGFR</strong> and <strong>urine albumin‑creatinine ratio</strong>.
-              </td>
-              <td>Kidney markers add prognostic information alongside metabolic and CV screening.</td>
-            </tr>
-          </tbody>
+          <tbody id="historyBody"></tbody>
         </table>
-
-        <p class="muted" style="margin-top:12px">
-          Tip: capture <em>trend lines</em> (e.g., waist, BP, TG, A1C) rather than single snapshots—patterns often emerge over 6–24 months.
+        <p class="muted small" style="margin-top:10px">
+          Data are stored locally under <code>localStorage</code> key: <code>menopause_cardiometabolic_prototype_v1</code>.
         </p>
       </div>
     </section>
 
-    <section class="grid" id="patterns">
-      <div class="card col-7">
-        <h2>Pattern signals that are easy to miss</h2>
-        <p class="muted">These are not diagnoses—just “review together” prompts.</p>
-
-        <h3>1) Central adiposity + borderline labs</h3>
-        <ul>
-          <li>Waist circumference rising while BMI changes little</li>
-          <li>Triglycerides creeping up (≥150 mg/dL)</li>
-          <li>A1C drifting upward (even within “prediabetes” range)</li>
-        </ul>
-
-        <h3>2) Metabolic syndrome clustering</h3>
-        <ul>
-          <li>BP elevated + TG elevated + low HDL + hyperglycemia</li>
-          <li>Document criteria count (0–5) at each visit</li>
-        </ul>
-
-        <h3>3) “Reassuring HDL” in the wrong context</h3>
-        <ul>
-          <li>HDL‑C may look normal, but overall atherogenic profile worsens across menopause</li>
-          <li>Consider ApoB/non‑HDL‑C discussion with clinician when available</li>
-        </ul>
-
-        <h3>4) Risk enhancers not captured in calculators</h3>
-        <ul>
-          <li>Early menopause/POI, pregnancy complications, PCOS</li>
-          <li>Inflammatory disease, depression</li>
-        </ul>
-      </div>
-
-      <div class="card col-5" id="talk">
-        <h2>Bring this to your visit</h2>
-        <p class="muted">Copy/paste into a portal message or print.</p>
-
-        <div class="flag">
-          <span class="dot ok" aria-hidden="true"></span>
-          <div>
-            <strong>Questions to ask</strong>
-            <div class="muted">Focused on missed opportunities + patterns</div>
-          </div>
-        </div>
-
-        <ul>
-          <li>Can we measure/track my <strong>waist circumference</strong> along with BMI?</li>
-          <li>Do my BP/lipids/A1C meet criteria for <strong>metabolic syndrome</strong>?</li>
-          <li>What is my 10‑year <strong>ASCVD risk</strong>, and does it underestimate risk for me?</li>
-          <li>Do I have any <strong>female‑specific risk enhancers</strong> (early menopause, pregnancy history, PCOS)?</li>
-          <li>Should we check <strong>kidney markers</strong> (eGFR, urine ACR)?</li>
-          <li>Would <strong>CAC</strong>, <strong>Lp(a)</strong>, or <strong>hs‑CRP</strong> help refine my risk?</li>
-        </ul>
-
-        <div class="ctaRow">
-          <a class="btn primary" href="#" onclick="window.print(); return false;">Print this page</a>
-          <a class="btn" href="#" id="copyBtn">Copy questions</a>
-        </div>
-
-        <p class="muted" id="copyStatus" style="margin:10px 0 0"></p>
-      </div>
-
-      <div class="card col-12">
-        <h2>Implementation note (if you turn this into a product)</h2>
-        <p class="muted">
-          The highest‑value feature is not another tracker—it’s a <strong>single integrated view</strong> that:
-          (1) confirms whether each screening domain was actually completed, and
-          (2) flags when multiple small changes form a coherent risk pattern.
-        </p>
-      </div>
-    </section>
-
-    <footer class="footer">
-      <p>
-        Educational content only. If you have chest pain, severe shortness of breath, or stroke symptoms, seek emergency care.
-      </p>
-      <p>
-        Customize: replace placeholder links, add resources, and connect a contact form if desired.
-      </p>
-      <p>© <span id="year"></span> Metabolic Hub for Women</p>
+    <footer class="muted small" style="margin-top:14px">
+      Educational/prototype only. No identifiers recommended. For production: SMART on FHIR integration, auth, audit logs, and approved hosting are required.
     </footer>
 
   </div>
 
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    // ----------------------------
+    // Storage
+    // ----------------------------
+    const STORAGE_KEY = 'menopause_cardiometabolic_prototype_v1';
 
-    const copyBtn = document.getElementById('copyBtn');
-    const copyStatus = document.getElementById('copyStatus');
+    function loadAll() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      try { return raw ? JSON.parse(raw) : []; } catch { return []; }
+    }
 
-    const questions = [
-      'Can we measure/track my waist circumference along with BMI?',
-      'Do my BP/lipids/A1C meet criteria for metabolic syndrome?',
-      'What is my 10-year ASCVD risk, and does it underestimate risk for me?',
-      'Do I have any female-specific risk enhancers (early menopause, pregnancy history, PCOS)?',
-      'Should we check kidney markers (eGFR, urine ACR)?',
-      'Would CAC, Lp(a), or hs-CRP help refine my risk?'
-    ].map(q => '- ' + q).join('\n');
+    function saveAll(arr) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    }
 
-    copyBtn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      try {
-        await navigator.clipboard.writeText('Questions for my visit:\n' + questions);
-        copyStatus.textContent = 'Copied to clipboard.';
-      } catch (err) {
-        copyStatus.textContent = 'Copy failed in this browser. You can manually select and copy the text.';
+    function sortByDateAsc(arr) {
+      return [...arr].sort((a,b) => (a.date || '').localeCompare(b.date || ''));
+    }
+
+    function n(v) {
+      const x = Number(v);
+      return Number.isFinite(x) ? x : null;
+    }
+
+    // ----------------------------
+    // Simple heuristics
+    // ----------------------------
+    function calcBMI(weightKg, heightCm) {
+      const w = n(weightKg), h = n(heightCm);
+      if (!w || !h) return null;
+      const m = h / 100;
+      return +(w / (m*m)).toFixed(1);
+    }
+
+    function metsCriteriaCount(visit) {
+      let c = 0;
+
+      // Waist >= 88 cm
+      if (n(visit.waistCm) !== null && n(visit.waistCm) >= 88) c++;
+
+      // TG >= 150
+      if (n(visit.tg) !== null && n(visit.tg) >= 150) c++;
+
+      // HDL <= 50
+      if (n(visit.hdl) !== null && n(visit.hdl) <= 50) c++;
+
+      // BP >= 130/85 (prototype threshold for MetS criteria)
+      const sbp = n(visit.sbp), dbp = n(visit.dbp);
+      if ((sbp !== null && sbp >= 130) || (dbp !== null && dbp >= 85)) c++;
+
+      // Dysglycemia: use fasting glucose if available, else A1c proxy
+      const fg = n(visit.fastingGlucose);
+      const a1c = n(visit.a1c);
+      if (fg !== null && fg >= 100) c++;
+      else if (fg === null && a1c !== null && a1c >= 5.7) c++;
+
+      return c;
+    }
+
+    function enhancersList(v) {
+      const out = [];
+      if (v.enhEarlyMenopause) out.push('Early menopause/POI');
+      if (v.enhAPO) out.push('APO');
+      if (v.enhPCOS) out.push('PCOS');
+      if (v.enhInflamm) out.push('Inflamm');
+      if (v.enhDepression) out.push('Depression');
+      return out;
+    }
+
+    function missingDomains(latest) {
+      const missing = [];
+      if (!latest) return ['No visits saved yet.'];
+
+      // "Domains" based on clinician-facing need
+      if (n(latest.waistCm) === null) missing.push('Waist circumference not recorded');
+      if (n(latest.sbp) === null || n(latest.dbp) === null) missing.push('Blood pressure incomplete');
+      if (n(latest.ldl) === null || n(latest.hdl) === null || n(latest.tg) === null) missing.push('Lipids incomplete (LDL/HDL/TG)');
+      if (n(latest.a1c) === null && n(latest.fastingGlucose) === null) missing.push('Glycemia not recorded (A1c/fasting glucose)');
+      if (n(latest.egfr) === null) missing.push('eGFR not recorded');
+      if (n(latest.uacr) === null) missing.push('Urine ACR not recorded');
+
+      return missing;
+    }
+
+    function trendFlags(visits) {
+      // Very simple: compare last vs previous for certain metrics
+      const v = sortByDateAsc(visits);
+      if (v.length < 2) return [];
+      const prev = v[v.length - 2];
+      const last = v[v.length - 1];
+
+      const flags = [];
+
+      function deltaFlag(label, key, dir, minDelta) {
+        const a = n(prev[key]);
+        const b = n(last[key]);
+        if (a === null || b === null) return;
+        const d = b - a;
+        if (dir === 'up' && d >= minDelta) flags.push(`${label} increased (${a} → ${b})`);
+        if (dir === 'down' && d <= -minDelta) flags.push(`${label} decreased (${a} → ${b})`);
       }
-      setTimeout(() => copyStatus.textContent = '', 2500);
+
+      deltaFlag('Waist circumference', 'waistCm', 'up', 2);
+      deltaFlag('SBP', 'sbp', 'up', 5);
+      deltaFlag('Triglycerides', 'tg', 'up', 20);
+      deltaFlag('HbA1c', 'a1c', 'up', 0.2);
+      deltaFlag('LDL-C', 'ldl', 'up', 15);
+
+      // Pattern cluster: waist + TG + A1c all up (if available)
+      const wPrev = n(prev.waistCm), wLast = n(last.waistCm);
+      const tgPrev = n(prev.tg), tgLast = n(last.tg);
+      const aPrev = n(prev.a1c), aLast = n(last.a1c);
+      if (wPrev !== null && wLast !== null && tgPrev !== null && tgLast !== null && aPrev !== null && aLast !== null) {
+        if ((wLast - wPrev) >= 2 && (tgLast - tgPrev) >= 20 && (aLast - aPrev) >= 0.2) {
+          flags.push('Cluster: waist ↑ + TG ↑ + A1c ↑ (review for insulin resistance / MetS trajectory)');
+        }
+      }
+
+      return flags;
+    }
+
+    // ----------------------------
+    // Charts
+    // ----------------------------
+    let waistChart, bpChart, a1cChart, lipidChart, kidneyChart;
+
+    function buildLineChart(ctx, labels, datasets, options={}) {
+      return new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { labels: { color: '#eef1f7' } },
+            tooltip: { enabled: true }
+          },
+          scales: {
+            x: { ticks: { color: '#b5bdd2' }, grid: { color: 'rgba(255,255,255,.06)' } },
+            y: { ticks: { color: '#b5bdd2' }, grid: { color: 'rgba(255,255,255,.06)' } }
+          },
+          ...options
+        }
+      });
+    }
+
+    function refreshCharts(visits) {
+      const v = sortByDateAsc(visits);
+      const labels = v.map(x => x.date);
+
+      const waist = v.map(x => n(x.waistCm));
+      const sbp = v.map(x => n(x.sbp));
+      const dbp = v.map(x => n(x.dbp));
+      const a1c = v.map(x => n(x.a1c));
+      const ldl = v.map(x => n(x.ldl));
+      const hdl = v.map(x => n(x.hdl));
+      const tg = v.map(x => n(x.tg));
+      const egfr = v.map(x => n(x.egfr));
+      const uacr = v.map(x => n(x.uacr));
+
+      // Destroy existing charts
+      [waistChart, bpChart, a1cChart, lipidChart, kidneyChart].forEach(ch => { if (ch) ch.destroy(); });
+
+      waistChart = buildLineChart(
+        document.getElementById('waistChart'),
+        labels,
+        [{ label: 'Waist (cm)', data: waist, borderColor: '#6aa6ff', backgroundColor: 'rgba(106,166,255,.15)', tension: .25 }]
+      );
+
+      bpChart = buildLineChart(
+        document.getElementById('bpChart'),
+        labels,
+        [
+          { label: 'SBP', data: sbp, borderColor: '#ffd166', backgroundColor: 'rgba(255,209,102,.12)', tension: .25 },
+          { label: 'DBP', data: dbp, borderColor: '#35d39a', backgroundColor: 'rgba(53,211,154,.10)', tension: .25 }
+        ]
+      );
+
+      a1cChart = buildLineChart(
+        document.getElementById('a1cChart'),
+        labels,
+        [{ label: 'HbA1c (%)', data: a1c, borderColor: '#9b7bff', backgroundColor: 'rgba(155,123,255,.12)', tension: .25 }]
+      );
+
+      lipidChart = buildLineChart(
+        document.getElementById('lipidChart'),
+        labels,
+        [
+          { label: 'LDL-C', data: ldl, borderColor: '#6aa6ff', backgroundColor: 'rgba(106,166,255,.10)', tension: .25 },
+          { label: 'HDL-C', data: hdl, borderColor: '#35d39a', backgroundColor: 'rgba(53,211,154,.08)', tension: .25 },
+          { label: 'TG', data: tg, borderColor: '#ff6b6b', backgroundColor: 'rgba(255,107,107,.08)', tension: .25 }
+        ]
+      );
+
+      kidneyChart = new Chart(document.getElementById('kidneyChart'), {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            { label: 'eGFR', data: egfr, borderColor: '#6aa6ff', backgroundColor: 'rgba(106,166,255,.10)', tension: .25, yAxisID: 'y' },
+            { label: 'Urine ACR (mg/g)', data: uacr, borderColor: '#ffd166', backgroundColor: 'rgba(255,209,102,.10)', tension: .25, yAxisID: 'y1' }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { labels: { color: '#eef1f7' } } },
+          scales: {
+            x: { ticks: { color: '#b5bdd2' }, grid: { color: 'rgba(255,255,255,.06)' } },
+            y: { position: 'left', ticks: { color: '#b5bdd2' }, grid: { color: 'rgba(255,255,255,.06)' } },
+            y1: {
+              position: 'right',
+              ticks: { color: '#b5bdd2' },
+              grid: { drawOnChartArea: false }
+            }
+          }
+        }
+      });
+    }
+
+    // ----------------------------
+    // Render flags + history
+    // ----------------------------
+    function renderFlags(visits) {
+      const flagsEl = document.getElementById('flags');
+      flagsEl.innerHTML = '';
+
+      const v = sortByDateAsc(visits);
+      const latest = v[v.length - 1];
+
+      const missing = missingDomains(latest);
+      const trends = trendFlags(v);
+
+      const mets = latest ? metsCriteriaCount(latest) : null;
+
+      const flagCard = (type, title, lines) => {
+        const dotClass = type === 'ok' ? 'dot ok' : (type === 'bad' ? 'dot bad' : 'dot');
+        const div = document.createElement('div');
+        div.className = 'flag';
+        div.innerHTML = `
+          <span class="${dotClass}" aria-hidden="true"></span>
+          <div>
+            <strong>${title}</strong>
+            <div class="muted">${(lines && lines.length) ? lines.map(x => `• ${x}`).join('<br/>') : '—'}</div>
+          </div>
+        `;
+        flagsEl.appendChild(div);
+      };
+
+      if (!latest) {
+        flagCard('warn', 'No data yet', ['Save a visit to generate trends and flags.']);
+        return;
+      }
+
+      flagCard(
+        missing.length ? 'warn' : 'ok',
+        'Missing / incomplete domains (latest visit)',
+        missing.length ? missing : ['All core domains present in latest visit.']
+      );
+
+      flagCard(
+        (mets !== null && mets >= 3) ? 'bad' : 'ok',
+        'Metabolic syndrome criteria count (prototype)',
+        [`Criteria met: ${mets}/5`, (mets >= 3 ? 'Meets ≥3/5 threshold (review clustering)' : 'Does not meet ≥3/5 on available data')]
+      );
+
+      flagCard(
+        trends.length ? 'warn' : 'ok',
+        'Recent trend signals (last vs prior)',
+        trends.length ? trends : ['No notable changes detected by simple thresholds.']
+      );
+
+      const enh = enhancersList(latest);
+      flagCard(
+        enh.length ? 'warn' : 'ok',
+        'Risk enhancers documented (latest visit)',
+        enh.length ? [enh.join(', ')] : ['None documented in this entry.']
+      );
+    }
+
+    function fmt(v, suffix='') {
+      const x = n(v);
+      return x === null ? '—' : `${x}${suffix}`;
+    }
+
+    function renderHistory(visits) {
+      const body = document.getElementById('historyBody');
+      body.innerHTML = '';
+      const v = sortByDateAsc(visits);
+
+      for (const visit of v.slice().reverse()) {
+        const tr = document.createElement('tr');
+        const mets = metsCriteriaCount(visit);
+        const enh = enhancersList(visit);
+
+        tr.innerHTML = `
+          <td>${visit.date || '—'}</td>
+          <td>${fmt(visit.waistCm, ' cm')}</td>
+          <td>${fmt(visit.sbp)}/${fmt(visit.dbp)} mmHg</td>
+          <td>${fmt(visit.a1c, ' %')}</td>
+          <td>${fmt(visit.ldl)}/${fmt(visit.hdl)}/${fmt(visit.tg)} mg/dL</td>
+          <td>${fmt(visit.egfr)} / ${fmt(visit.uacr)} </td>
+          <td>${mets}/5</td>
+          <td>${enh.length ? enh.join(', ') : '—'}</td>
+        `;
+        body.appendChild(tr);
+      }
+    }
+
+    function refreshAll() {
+      const visits = loadAll();
+      renderFlags(visits);
+      refreshCharts(visits);
+      renderHistory(visits);
+    }
+
+    // ----------------------------
+    // Form behavior
+    // ----------------------------
+    const visitDate = document.getElementById('visitDate');
+    const patientKey = document.getElementById('patientKey');
+    const weightKg = document.getElementById('weightKg');
+    const heightCm = document.getElementById('heightCm');
+    const bmi = document.getElementById('bmi');
+    const waistCm = document.getElementById('waistCm');
+    const sbp = document.getElementById('sbp');
+    const dbp = document.getElementById('dbp');
+    const ldl = document.getElementById('ldl');
+    const hdl = document.getElementById('hdl');
+    const tg = document.getElementById('tg');
+    const apob = document.getElementById('apob');
+    const a1c = document.getElementById('a1c');
+    const fastingGlucose = document.getElementById('fastingGlucose');
+    const egfr = document.getElementById('egfr');
+    const uacr = document.getElementById('uacr');
+    const notes = document.getElementById('notes');
+
+    const enhEarlyMenopause = document.getElementById('enhEarlyMenopause');
+    const enhAPO = document.getElementById('enhAPO');
+    const enhPCOS = document.getElementById('enhPCOS');
+    const enhInflamm = document.getElementById('enhInflamm');
+    const enhDepression = document.getElementById('enhDepression');
+
+    const status = document.getElementById('status');
+
+    function setTodayDefault() {
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const dd = String(d.getDate()).padStart(2,'0');
+      visitDate.value = `${yyyy}-${mm}-${dd}`;
+    }
+
+    function maybeAutoBMI() {
+      const calc = calcBMI(weightKg.value, heightCm.value);
+      if (calc !== null) bmi.value = calc;
+    }
+
+    weightKg.addEventListener('input', maybeAutoBMI);
+    heightCm.addEventListener('input', maybeAutoBMI);
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      if (!visitDate.value) {
+        status.textContent = 'Visit date is required.';
+        return;
+      }
+
+      const visit = {
+        date: visitDate.value,
+        patientKey: patientKey.value?.trim() || '',
+        weightKg: n(weightKg.value),
+        heightCm: n(heightCm.value),
+        bmi: n(bmi.value),
+        waistCm: n(waistCm.value),
+        sbp: n(sbp.value),
+        dbp: n(dbp.value),
+        ldl: n(ldl.value),
+        hdl: n(hdl.value),
+        tg: n(tg.value),
+        apob: n(apob.value),
+        a1c: n(a1c.value),
+        fastingGlucose: n(fastingGlucose.value),
+        egfr: n(egfr.value),
+        uacr: n(uacr.value),
+        enhEarlyMenopause: !!enhEarlyMenopause.checked,
+        enhAPO: !!enhAPO.checked,
+        enhPCOS: !!enhPCOS.checked,
+        enhInflamm: !!enhInflamm.checked,
+        enhDepression: !!enhDepression.checked,
+        notes: notes.value?.trim() || ''
+      };
+
+      // Save as append-only for now (prototype)
+      const all = loadAll();
+      all.push(visit);
+      saveAll(all);
+
+      status.textContent = `Saved visit for ${visit.date}.`;
+      refreshAll();
     });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      const ok = confirm('This will permanently delete ALL locally stored visits in this browser. Continue?');
+      if (!ok) return;
+      localStorage.removeItem(STORAGE_KEY);
+      status.textContent = 'Cleared local data.';
+      refreshAll();
+    });
+
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const data = loadAll();
+      const blob = new Blob([JSON.stringify({ storageKey: STORAGE_KEY, exportedAt: new Date().toISOString(), visits: data }, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'menopause-cardiometabolic-prototype-export.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      status.textContent = 'Exported JSON.';
+    });
+
+    document.getElementById('importFile').addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        const visits = Array.isArray(parsed) ? parsed : (parsed.visits || []);
+        if (!Array.isArray(visits)) throw new Error('Invalid format');
+        saveAll(visits);
+        status.textContent = 'Imported JSON and replaced local dataset.';
+        refreshAll();
+      } catch (err) {
+        status.textContent = 'Import failed: invalid JSON format.';
+      } finally {
+        e.target.value = '';
+      }
+    });
+
+    // Initialize
+    setTodayDefault();
+    refreshAll();
   </script>
 </body>
 </html>
