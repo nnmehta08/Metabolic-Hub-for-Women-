@@ -1,80 +1,95 @@
-# Metabolic Hub for Women (Peri- & Postmenopause)
+# Menopause Cardiometabolic Trend Prototype (Clinician-Facing)
 
-A lightweight GitHub Pages site focused on **optimizing missed cardiometabolic care opportunities** in peri‑/postmenopausal women—especially those with overweight/obesity—by organizing key screening domains and highlighting **patterns that are commonly overlooked**.
+Prototype web app to help clinicians **capture key cardiometabolic measures**, store them **locally in the browser**, visualize **trends over time**, and highlight **missed care opportunities** and **pattern-level risk signals** that may be overlooked when metrics are reviewed in isolation.
 
-> Clinical framing (from the evidence summary you provided): Cardiometabolic assessment in postmenopausal women with obesity centers on blood pressure, lipids, glucose/diabetes status, and adiposity measures (BMI + waist circumference), integrated into a global ASCVD risk estimate, with attention to metabolic syndrome, female‑specific risk enhancers, and (when appropriate) CAC/Lp(a)/hs‑CRP and kidney function (eGFR, urine ACR).
+**Prototype created by Dr. Vinaya Gogineni and Dr. Nihit N. Mehta.**
 
----
-
-## What this repo contains
-
-- `index.html` — single‑page site (no build tools)
-- `README.md` — project overview + how to deploy to GitHub Pages
+> Focus (clinical need): In postmenopausal women with overweight/obesity, cardiometabolic risk assessment clusters around BP, lipids, glucose/diabetes, and adiposity (BMI + waist circumference), integrated with global ASCVD risk estimation, metabolic syndrome identification, female-specific risk enhancers, and—when appropriate—CAC/Lp(a)/hs-CRP plus kidney function (eGFR, urine ACR).
 
 ---
 
-## Project goals
+## What this prototype does
 
-1. **Reduce missed screening opportunities** by presenting the “must‑check” cardiometabolic factors together.
-2. **Surface pattern clues** that can be missed when data are reviewed one‑by‑one (e.g., central adiposity + rising BP + triglycerides + borderline A1C).
-3. Provide a **patient‑friendly hub** that encourages discussion with clinicians.
+### Core features (in this repo)
+- **Clinician data entry** for key cardiometabolic measures
+- **Local storage only** (browser `localStorage`) to persist longitudinal values without a backend
+- **Automatic graphs** for:
+  - Waist circumference
+  - Systolic/diastolic BP
+  - A1C
+  - Triglycerides, LDL-C, HDL-C
+  - eGFR and urine ACR
+- **Pattern flags** for:
+  - Metabolic syndrome criteria count (0–5)
+  - Missing/overdue domains (e.g., waist circumference not recorded)
+  - Rising trajectories (e.g., waist ↑ + TG ↑ + A1C ↑)
+- **Export/Import JSON** so a clinician can move data between machines (still prototype-level workflow)
 
----
-
-## Key screening pillars highlighted on the site
-
-- **Adiposity & body composition**: BMI (annual), **waist circumference** (especially BMI <35; threshold ≥88 cm / 35 in)
-- **Blood pressure**: at least annually; evaluate ≥140/90 mmHg
-- **Lipids**: lipid panel per guideline cadence; note menopause‑associated atherogenic changes
-- **Glucose/diabetes**: A1C/fasting glucose/OGTT per risk‑based intervals (overweight/obesity)
-- **Metabolic syndrome**: identify clustering (≥3 of 5 criteria)
-- **Global risk**: 10‑year ASCVD risk (PCE/PREVENT), acknowledging potential underestimation in women
-- **Risk enhancers**: early menopause/POI, adverse pregnancy outcomes, PCOS, inflammatory disease, depression
-- **Additional tests (selected)**: CAC, Lp(a), hs‑CRP
-- **Kidney function (CKM context)**: eGFR and urine albumin‑creatinine ratio
-
----
-
-## Clinical boundaries / disclaimer (important)
-
-This site is **educational** and is **not medical advice**, diagnosis, or treatment. It does not replace clinical judgment. Any risk estimates or “pattern” flags are intended to support conversations with a licensed clinician.
+### Planned (not implemented here)
+- **EHR pull** via FHIR (SMART on FHIR) or health-system integration
+- Multi-patient storage and authentication
+- Audit logging, role-based access, HIPAA-grade hosting
 
 ---
 
-## Quick start (local)
+## Important notes / clinical boundaries
 
-Open `index.html` in a browser.
-
----
-
-## Deploy to GitHub Pages
-
-1. Push this repo to GitHub.
-2. Go to **Settings → Pages**.
-3. Under **Build and deployment**, choose **Deploy from a branch**.
-4. Select branch **`main`** and folder **`/ (root)`**.
-5. Save. Your site will publish at:
-   - `https://<username>.github.io/<repo>/` (project pages)
-   - or `https://<username>.github.io/` (if this is a user/organization pages repo)
+- This is a **prototype** and **not** a medical device.
+- Educational + workflow support tool only; does not provide diagnosis or treatment recommendations.
+- Data are stored locally in the user’s browser. Do **not** enter identifiers if you are not allowed to store them on the device.
+- For production use, a security review, threat model, and approved hosting environment would be required.
 
 ---
 
-## Customization
+## Data model (high level)
 
-- Update the site name and contact links in `index.html`.
-- Replace placeholder buttons (newsletter/booking/resources) with your URLs.
-- Add more pages later (e.g., `/resources.html`, `/about.html`) if needed.
+Each entry is a dated visit with optional fields:
+- Anthropometrics: weight, BMI, waist circumference
+- BP: systolic, diastolic
+- Lipids: total cholesterol, LDL-C, HDL-C, triglycerides, ApoB (optional)
+- Glycemia: A1C, fasting glucose (optional)
+- Kidney: eGFR, urine ACR
+- Risk enhancers: early menopause/POI, adverse pregnancy outcomes, PCOS, inflammatory disease, depression
+- Notes
 
 ---
 
-## Suggested next features (optional)
+## How the flags work (prototype heuristics)
 
-- A simple questionnaire to help users print a “talk to my clinician” checklist.
-- A tracking table for waist circumference, BP, lipids, A1C, sleep, activity.
-- Links to guidelines and patient‑friendly references.
+- **Metabolic syndrome**: counts criteria based on available fields:
+  - Waist circumference ≥88 cm
+  - TG ≥150 mg/dL
+  - HDL-C ≤50 mg/dL
+  - BP ≥130/85 (or flagged if SBP/DBP entered above threshold)
+  - A1C ≥5.7% (used as proxy for dysglycemia when fasting glucose not entered)
+- **Trend flags** (simple): compares the most recent value vs. prior value(s) and flags directional changes.
+
+Heuristics are intentionally simple for prototype clarity and should be validated before clinical deployment.
+
+---
+
+## Run locally
+
+Just open `index.html` in a browser.
+
+---
+
+## GitHub Pages deploy
+
+1. Push repo to GitHub
+2. Settings → Pages → Deploy from branch
+3. Choose `main` and `/ (root)`
+
+---
+
+## Recommended repo name
+
+Examples:
+- `menopause-cardiometabolic-trends-prototype`
+- `ckm-menopause-clinician-prototype`
 
 ---
 
 ## License
 
-Choose a license (e.g., MIT) if you plan to share/accept contributions.
+Add a license if sharing externally (e.g., MIT). For internal clinical prototyping, follow your institution’s policies.
